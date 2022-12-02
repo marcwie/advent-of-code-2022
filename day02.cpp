@@ -10,7 +10,7 @@ char transformPlayerB(char playerB) {
 
 }
 
-char findStragetyPlayerB(char playerA, char outcome) {
+char findStrategyPlayerB(char playerA, char outcome) {
 
     char playerB;
     if (outcome == 'X') {
@@ -56,7 +56,7 @@ int solve(std::string inputFile, int part) {
         playerA = line[0];
         playerB = line[2];
         if (part == 1) playerB = transformPlayerB(playerB);
-        else playerB = findStragetyPlayerB(playerA, playerB);
+        else playerB = findStrategyPlayerB(playerA, playerB);
         totalScore += play(playerA, playerB);
     }
 
