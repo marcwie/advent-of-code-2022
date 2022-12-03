@@ -70,11 +70,11 @@ int main () {
     std::map<int, int> elves;
     int solution;
 
-    elves = computeTotalCalories("inputs/day1/test.txt");
+    elves = computeTotalCalories("inputs/day01/test.txt");
     assert(findElfWithMostCalories(elves) == 4);
     assert(findTotalCaloriesOfTopThreeElves(elves) == 45000);
 
-    elves = computeTotalCalories("inputs/day1/input.txt");
+    elves = computeTotalCalories("inputs/day01/input.txt");
     solution = findElfWithMostCalories(elves);
     std::cout << "Part 1 solution: " << elves[solution - 1] << std::endl;
     assert(elves[solution - 1] == 72240);

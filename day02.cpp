@@ -67,15 +67,15 @@ int solve(std::string inputFile, int part) {
 
 int main () {
 
-    assert(solve("inputs/day2/test.txt", 1) == 15);
-    assert(solve("inputs/day2/test.txt", 2) == 12);
+    assert(solve("inputs/day02/test.txt", 1) == 15);
+    assert(solve("inputs/day02/test.txt", 2) == 12);
 
     int solution;
-    solution = solve("inputs/day2/input.txt", 1);
+    solution = solve("inputs/day02/input.txt", 1);
     std::cout << "Part 1 solution: " << solution << std::endl;
     assert(solution == 14297);
 
-    solution = solve("inputs/day2/input.txt", 2);
+    solution = solve("inputs/day02/input.txt", 2);
     std::cout << "Part 2 solution: " << solution << std::endl;
     assert(solution == 10498);
 
