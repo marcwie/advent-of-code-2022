@@ -90,15 +90,17 @@ int solve(std::string inputFile, bool print = false) {
     computer.run(data);
     if (print) computer.printScreen();
     return computer.signalStrength();
-    
+
 }
 
 int main () {
 
     assert(solve("inputs/day10/test.txt") == 13140);
 
-    std::cout << "Part 1 solution: " << solve("inputs/day10/input.txt") << std::endl;
-    
+    int solution = solve("inputs/day10/input.txt");
+    std::cout << "Part 1 solution: " << solution << std::endl;
+    assert(solution == 13860);
+
     std::cout << "Part 2 solution:" << std::endl;
     solve("inputs/day10/input.txt", true);
 
