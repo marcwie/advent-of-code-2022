@@ -5,30 +5,32 @@
 #include <sstream>
 #include <algorithm>
 
-
 class Monkey {
 
 private:
-    std::vector<int> items_;
+    std::vector<long> items_;
     std::string operation_;
-    int operand_;
-    int test_;
-    int throwToIfTrue_;
-    int throwToIfFalse_;
+    int operand_, test_, throwToIfTrue_, throwToIfFalse_;
     int inspected_ = 0;
+    long reductionFactor_ = 3;
+    std::string worryReduction_ = "division";
 
-    void newWorryLevel (int &item) {
+    void newWorryLevel (long &item) {
         
         if (operation_ == "add") item += operand_;
         else if (operation_ == "multiply") item *= operand_;
         else item *= item; 
-
-        item /= 3;
-
     }
+
+    void reduceWorryLevel(long &item) {
+
+        if (worryReduction_ == "division") item /= reductionFactor_;
+        else item %= reductionFactor_;
+    }
+
 public:
 
-    Monkey (std::vector<int> items, std::string operation, int operand, int test, int throwIfTrue, int throwIfFalse) {
+    Monkey (std::vector<long> items, std::string operation, int operand, int test, int throwIfTrue, int throwIfFalse) {
         items_ = items;
         operation_ = operation;
         operand_ = operand;
@@ -37,31 +39,35 @@ public:
         throwToIfFalse_ = throwIfFalse;
     }
 
-    std::vector<int> treatItem () {
+    std::vector<long> treatItem () {
         
         inspected_++;
 
-        // Get first item
-        int item = items_.front();
+        long item = items_.front();
         items_.erase(items_.begin());
         
-        // Compute worry level
         newWorryLevel(item);
-        
-        // Decide which monkey gets the item next
+        reduceWorryLevel(item);
+
         int nextMonkey;
         if (item % test_ == 0) nextMonkey = throwToIfTrue_;
         else nextMonkey = throwToIfFalse_;
         
-        return std::vector<int> {nextMonkey, item};
+        return std::vector<long> {nextMonkey, item};
     }
 
     bool hasIitem () {return items_.size() > 0;}
 
-    void getItem (int item) {items_.push_back(item);}
+    void getItem (long item) {items_.push_back(item);}
 
     int inspections () {return inspected_;}
 
+    void setWorryReduction (std::string reductionType, long reductionFactor) {
+        worryReduction_ = reductionType;
+        reductionFactor_ = reductionFactor;
+    }
+
+    int testValue () { return test_; }
 };
 
 std::vector<std::string> loadData (std::string inputFile) {
@@ -75,13 +81,13 @@ std::vector<std::string> loadData (std::string inputFile) {
     return data;
 }
 
-std::vector<int> getItems(std::string line, char separator=',') {
+std::vector<long> getItems(std::string line, char separator=',') {
 
     std::istringstream stream(line);
     std::string entry;
-    std::vector<int> entries;
+    std::vector<long> entries;
 
-    while (getline(stream, entry, separator)) entries.push_back(std::stoi(entry));
+    while (getline(stream, entry, separator)) entries.push_back(std::stol(entry));
     
     return entries;
 }
@@ -90,7 +96,7 @@ std::vector<Monkey> parseData (std::vector<std::string> data) {
     
     int nMonkeys = (data.size() - 6) / 7 + 1;
     
-    std::vector<int> items;
+    std::vector<long> items;
     std::vector<Monkey> monkeys;
     int l, operand, test, throwIfTrue, throwIfFalse;
     std::string operation;
@@ -117,12 +123,18 @@ std::vector<Monkey> parseData (std::vector<std::string> data) {
     return monkeys;
 }
 
-int part1(std::string inputFile, int nRounds=20) {
+long solve(std::string inputFile, int nRounds=20, int part = 1) {
 
     std::vector<std::string> data = loadData(inputFile);
     std::vector<Monkey> monkeys = parseData(data);
 
-    std::vector<int> nextItem;
+    if (part == 2) {
+        long factor = 1;
+        for (int m=0; m<monkeys.size(); m++) factor *= monkeys[m].testValue(); 
+        for (int m=0; m<monkeys.size(); m++) monkeys[m].setWorryReduction("modulo", factor); 
+    }
+
+    std::vector<long> nextItem;
     for (int r=0; r<nRounds; r++) {
         for (int m=0; m<monkeys.size(); m++) {
             while (monkeys[m].hasIitem()) {
@@ -132,7 +144,7 @@ int part1(std::string inputFile, int nRounds=20) {
         }
     }
 
-    std::vector<int> inspections;
+    std::vector<long> inspections;
     for (int m=0; m<monkeys.size(); m++) {
         inspections.push_back(monkeys[m].inspections());
     }
@@ -144,12 +156,17 @@ int part1(std::string inputFile, int nRounds=20) {
 
 int main () {
 
-    assert(part1("inputs/day11/test.txt") == 10605);
+    assert(solve("inputs/day11/test.txt", 20, 1) == 10605);
+    assert(solve("inputs/day11/test.txt", 10000, 2) == 2713310158);
 
-    int solution;
-    solution = part1("inputs/day11/input.txt");
+    long solution;
+    solution = solve("inputs/day11/input.txt", 20, 1);
     std::cout << "Part 1 solution: " << solution << std::endl;
     assert(solution == 54036);
+    
+    solution = solve("inputs/day11/input.txt", 10000, 2);
+    std::cout << "Part 2 solution: " << solution << std::endl;
+    assert(solution == 13237873355);
     
     return 0;
 }
